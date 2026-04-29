@@ -1,0 +1,8 @@
+{
+  "name": "MENTARI",
+  "description": "Media Edukasi & Tata Kelola Administrasi Mandiri",
+  "requestFramePermissions": [
+    "geolocation"
+  ],
+  "majorCapabilities": []
+}
