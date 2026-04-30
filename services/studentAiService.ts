@@ -64,21 +64,46 @@ export const getMoodResponse = async (mood: string): Promise<string> => {
 export const generateAdventureContent = async (type: string, profile: StudentProfile, input?: string): Promise<string> => {
   try {
     const ai = createAI();
-    let systemInstruction = "Anda adalah Pemandu Belajar AI yang kreatif. Hasilkan HANYA kode HTML mandiri tanpa teks pembuka, penutup, atau penjelasan apa pun. DILARANG KERAS menimpa window.fetch.";
-    const userPrompt = `Buat petualangan interaktif (Gamified) tentang '${input || 'Umum'}'. 
-    Gunakan Tailwind CSS, Fredoka font, FontAwesome. 
-    WAJIB panggil window.parent.postMessage({ type: 'ADVENTURE_COMPLETE' }, '*') saat selesai.
-    DILARANG menimpa window.fetch.
-    Hasilkan HANYA kode HTML lengkap.`;
+    let systemInstruction = `Anda adalah Pemandu Belajar AI untuk aplikasi 'Mentari'. 
+    Tugas Anda adalah membuat petualangan interaktif berbasis HTML/JS yang mendidik dan seru.
+    Gunakan Bahasa Indonesia yang ramah anak dan inspiratif.
+    Hasilkan HANYA kode HTML mandiri (Single File) yang sudah termasuk CSS (Tailwind via CDN) dan JS.
+    DILARANG menyertakan teks penjelasan, pembuka, atau penutup di luar tag HTML.
+    DILARANG KERAS menimpa window.fetch atau memodifikasi objek global aplikasi induk.`;
+
+    const userPrompt = `Buatlah sebuah PETUALANGAN INTERAKTIF DIGITAL untuk siswa bernama ${profile.name} (Level ${profile.level}).
+    
+    TEMA MISI: '${input || 'Petualangan Karakter'}'
+    KATEGORI DIMENSI: ${type}
+    
+    Persyaratan Teknis:
+    1. Gunakan Tailwind CSS untuk desain yang modern, ceria, dan bersih (Modern Edutech).
+    2. Gunakan font 'Fredoka' dari Google Fonts untuk kesan bersahabat.
+    3. Gunakan FontAwesome (CDN) untuk ikon-ikon menarik.
+    4. Konten harus berupa mini-game sederhana, narasi pilihan ganda (Choose Your Own Adventure), atau simulasi laboratorium mini.
+    5. Di akhir petualangan, WAJIB panggil: window.parent.postMessage({ type: 'ADVENTURE_COMPLETE' }, '*');
+    6. Pastikan responsif di layar HP (Mobile Friendly).
+    7. Sertakan tombol "SELESAIKAN MISI" di bagian akhir yang memicu postMessage di atas.
+    
+    Hasilkan HANYA kode HTML lengkap dimulai dengan <!DOCTYPE html>.`;
 
     const response = await ai.models.generateContent({
       model: getAiModel(),
       contents: userPrompt,
-      config: { systemInstruction, temperature: 1.0 }
+      config: { 
+        systemInstruction, 
+        temperature: 0.9,
+        topP: 0.95
+      }
     });
 
-    return cleanOutput(response.text || "");
+    const text = response.text;
+    if (!text || text.trim().length < 100) {
+       throw new Error("AI_RESPONSE_EMPTY_OR_TOO_SHORT");
+    }
+    return cleanOutput(text);
   } catch (e: any) {
+    console.error("Adventure Generation Error:", e);
     throw e;
   }
 };

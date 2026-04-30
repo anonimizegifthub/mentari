@@ -19,7 +19,14 @@ export const OPTIMIZED_MODEL = getAiModel();
 export const createAI = () => {
   const userKey = localStorage.getItem('USER_API_KEY');
   const envKey = process.env.API_KEY;
-  const finalKey = (userKey && userKey.trim() !== "") ? userKey.trim() : envKey;
+  const geminiKey = process.env.GEMINI_API_KEY;
+  
+  // Prioritas: Manual User Key > GEMINI_API_KEY (Platform) > API_KEY (Fallback)
+  const finalKey = (userKey && userKey.trim() !== "") 
+    ? userKey.trim() 
+    : (geminiKey && geminiKey.trim() !== "") 
+      ? geminiKey.trim() 
+      : envKey;
 
   if (!finalKey || finalKey === "undefined" || finalKey === "") {
     throw new Error("API_KEY_MISSING");
