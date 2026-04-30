@@ -434,15 +434,23 @@ const LoginPortal: React.FC<LoginPortalProps> = ({
     const gasParam = params.get('gas');
     if (gasParam) {
       try {
-        const decodedGas = atob(gasParam);
+        // Fallback for space-to-plus conversion if URI encoding was missed
+        const cleanGasParam = gasParam.replace(/ /g, '+');
+        const decodedGas = atob(cleanGasParam);
         if (decodedGas.startsWith('https://script.google.com/')) {
+          setIsSyncing(true);
           setTempGasUrl(decodedGas);
           setIsStudentOnlyMode(true);
           setLoginForm(prev => ({ ...prev, role: 'student', gasUrl: decodedGas }));
           setIsSystemConnected(true);
-          syncTeacherData(decodedGas).catch(() => {});
+          syncTeacherData(decodedGas).finally(() => {
+            setIsSyncing(false);
+          });
         }
-      } catch (e) { console.warn("Invalid GAS param"); }
+      } catch (e) { 
+        console.warn("Invalid GAS param", e); 
+        setIsSyncing(false);
+      }
     }
   }, []);
 
@@ -591,7 +599,7 @@ const LoginPortal: React.FC<LoginPortalProps> = ({
                                 <div className="space-y-1.5">
                                     <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Nama Siswa</label>
                                     <select required value={loginForm.studentId} onChange={e => setLoginForm({...loginForm, studentId: e.target.value})} className="w-full input-futuristic px-5 py-3.5 font-bold border-2 border-blue-50 text-sm">
-                                        <option value="">-- DAFTAR SISWA --</option>
+                                        <option value="">{isSyncing ? '-- SEDANG MEMUAT DATA... --' : '-- DAFTAR SISWA --'}</option>
                                         {students.map(s => <option key={s.id} value={s.id}>{(s.name || 'Siswa').toUpperCase()}</option>)}
                                     </select>
                                 </div>

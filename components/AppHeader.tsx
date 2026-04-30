@@ -59,7 +59,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({
         }
 
         const baseUrl = window.location.origin + window.location.pathname;
-        const shareLink = `${baseUrl}?gas=${btoa(gasUrl)}`;
+        const shareLink = `${baseUrl}?gas=${encodeURIComponent(btoa(gasUrl))}`;
         
         const shareData = {
             title: 'Akses Kelas Mentari',
