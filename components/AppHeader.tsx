@@ -62,7 +62,10 @@ const AppHeader: React.FC<AppHeaderProps> = ({
         const isDev = origin.includes('ais-dev-') || origin.includes('localhost') || origin.includes('web-preview');
         
         const baseUrl = origin + window.location.pathname;
-        const shareLink = `${baseUrl}?gas=${encodeURIComponent(btoa(gasUrl))}`;
+        const userApiKey = localStorage.getItem('USER_API_KEY') || '';
+        const gasEncoded = btoa(gasUrl);
+        const keyEncoded = userApiKey ? `&key=${btoa(userApiKey)}` : '';
+        const shareLink = `${baseUrl}?gas=${gasEncoded}${keyEncoded}`;
         
         if (isDev) {
             const confirmDev = window.confirm(

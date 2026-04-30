@@ -152,10 +152,16 @@ const PanelGuruPortal: React.FC<{
       alert("Masukkan Link GAS Anda terlebih dahulu!");
       return;
     }
+    const userApiKey = localStorage.getItem('USER_API_KEY') || '';
     const baseUrl = window.location.origin + window.location.pathname;
-    const shareLink = `${baseUrl}?gas=${btoa(settings.gasUrl)}`;
+    
+    // We bundle GAS URL and API Key (if available)
+    const gasEncoded = btoa(settings.gasUrl);
+    const keyEncoded = userApiKey ? `&key=${btoa(userApiKey)}` : '';
+    
+    const shareLink = `${baseUrl}?gas=${gasEncoded}${keyEncoded}`;
     navigator.clipboard.writeText(shareLink);
-    alert("LINK BERHASIL DISALIN!");
+    alert("LINK BERHASIL DISALIN!\n(Sudah termasuk Kunci AI jika Anda mengaturnya)");
   };
 
   const handleFileUpload = (type: 'mission' | 'material', e: React.ChangeEvent<HTMLInputElement>) => {

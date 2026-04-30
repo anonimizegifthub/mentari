@@ -954,7 +954,8 @@ const App: React.FC = () => {
                 localStorage.removeItem('isLoggedIn'); 
                 localStorage.removeItem('userRole');
                 localStorage.removeItem('loggedStudentId');
-                window.location.reload(); 
+                // Alihkan ke URL bersih tanpa parameter gas/key untuk keamanan
+                window.location.href = window.location.origin + window.location.pathname; 
               } 
             }}
             logoUrl={HEADER_LOGO_URL}

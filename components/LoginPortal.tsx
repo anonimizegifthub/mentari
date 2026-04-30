@@ -428,10 +428,11 @@ const LoginPortal: React.FC<LoginPortalProps> = ({
   const [isSyncing, setIsSyncing] = useState(false);
   const [isStudentOnlyMode, setIsStudentOnlyMode] = useState(false);
 
-  // Auto-detect GAS from URL
+  // Auto-detect GAS & Key from URL
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const gasParam = params.get('gas');
+    const keyParam = params.get('key');
     if (gasParam) {
       try {
         // Fallback for space-to-plus conversion if URI encoding was missed
@@ -442,13 +443,24 @@ const LoginPortal: React.FC<LoginPortalProps> = ({
           setTempGasUrl(decodedGas);
           setIsStudentOnlyMode(true);
           setLoginForm(prev => ({ ...prev, role: 'student', gasUrl: decodedGas }));
+          
+          // Detect API Key if present
+          if (keyParam) {
+            const cleanKeyParam = keyParam.replace(/ /g, '+');
+            const decodedKey = atob(cleanKeyParam);
+            if (decodedKey && decodedKey.trim().length > 10) {
+              localStorage.setItem('USER_API_KEY', decodedKey.trim());
+              setUserApiKey(decodedKey.trim());
+            }
+          }
+
           setIsSystemConnected(true);
           syncTeacherData(decodedGas).finally(() => {
             setIsSyncing(false);
           });
         }
       } catch (e) { 
-        console.warn("Invalid GAS param", e); 
+        console.warn("Invalid Shared Data param", e); 
         setIsSyncing(false);
       }
     }
