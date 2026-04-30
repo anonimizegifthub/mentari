@@ -58,8 +58,21 @@ const AppHeader: React.FC<AppHeaderProps> = ({
             return;
         }
 
-        const baseUrl = window.location.origin + window.location.pathname;
+        const origin = window.location.origin;
+        const isDev = origin.includes('ais-dev-') || origin.includes('localhost') || origin.includes('web-preview');
+        
+        const baseUrl = origin + window.location.pathname;
         const shareLink = `${baseUrl}?gas=${encodeURIComponent(btoa(gasUrl))}`;
+        
+        if (isDev) {
+            const confirmDev = window.confirm(
+                "PERINGATAN: Anda sedang berada di mode 'Preview Developer'.\n" +
+                "Link yang dihasilkan mungkin meminta login Google/Vercel jika dibagikan ke siswa.\n\n" +
+                "Sangat disarankan untuk membuka aplikasi melalui 'Shared App URL' yang tersedia di AI Studio sebelum menyalin link kelas untuk siswa.\n\n" +
+                "Lanjutkan menyalin link saat ini?"
+            );
+            if (!confirmDev) return;
+        }
         
         const shareData = {
             title: 'Akses Kelas Mentari',
