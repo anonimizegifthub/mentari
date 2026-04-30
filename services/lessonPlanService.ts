@@ -147,7 +147,7 @@ NIP. ${cleanNIP}`;
 
     const response = await ai.models.generateContent({
       model: getAiModel(),
-      contents: prompt,
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
       config: {
         tools: [{ googleSearch: {} }] 
       }

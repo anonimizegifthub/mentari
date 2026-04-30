@@ -60,7 +60,7 @@ export const generateTeacherTool = async (type: string, data: any): Promise<{ te
 
   const response = await ai.models.generateContent({
     model: getAiModel(),
-    contents: prompt,
+    contents: [{ role: 'user', parts: [{ text: prompt }] }],
     config: {
       systemInstruction: "Anda adalah asisten admin guru profesional yang mahir menyajikan data dalam tabel Markdown untuk kerapian maksimal."
     }
@@ -79,7 +79,7 @@ export const generateVisualPoster = async (materi: string, type: string = "Educa
 
     const response = await ai.models.generateContent({
         model: 'gemini-3-pro-image-preview',
-        contents: [{ text: prompt }],
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
         config: { 
             imageConfig: { 
                 aspectRatio: "3:4",
@@ -111,7 +111,7 @@ export const generateVisualLayout = async (materi: string, content: string, type
 
     const response = await ai.models.generateContent({
         model: getAiModel(),
-        contents: prompt,
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
         config: {
             responseMimeType: "application/json",
             responseSchema: {

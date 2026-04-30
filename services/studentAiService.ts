@@ -13,7 +13,7 @@ export const getDailyInspiration = async (subjects: string[]): Promise<{category
     
     const response = await ai.models.generateContent({
       model: getAiModel(),
-      contents: prompt,
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
       config: {
         responseMimeType: "application/json",
         responseSchema: {
@@ -39,7 +39,7 @@ export const getWordOfDay = async (studentName: string): Promise<{word: string, 
     const prompt = `Berikan satu kosakata Bahasa Indonesia yang INDAH untuk siswa. Nama siswa: ${studentName}. Format JSON: {"word": "...", "meaning": "...", "example": "..."}`;
     const response = await ai.models.generateContent({
       model: getAiModel(),
-      contents: prompt,
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
       config: { responseMimeType: "application/json" }
     });
     return JSON.parse(response.text || "{}");
@@ -53,7 +53,7 @@ export const getMoodResponse = async (mood: string): Promise<string> => {
     const ai = createAI();
     const response = await ai.models.generateContent({
       model: getAiModel(),
-      contents: `Siswa merasa ${mood}. Berikan 1 kalimat penyemangat (maks 15 kata).`,
+      contents: [{ role: 'user', parts: [{ text: `Siswa merasa ${mood}. Berikan 1 kalimat penyemangat (maks 15 kata). Jawab dalam Bahasa Indonesia.` }] }],
     });
     return response.text || "Tetap semangat ya!";
   } catch (e) {
@@ -64,41 +64,30 @@ export const getMoodResponse = async (mood: string): Promise<string> => {
 export const generateAdventureContent = async (type: string, profile: StudentProfile, input?: string): Promise<string> => {
   try {
     const ai = createAI();
-    let systemInstruction = `Anda adalah Pemandu Belajar AI untuk aplikasi 'Mentari'. 
+    const systemText = `Anda adalah Pemandu Belajar AI untuk aplikasi 'Mentari'. 
     Tugas Anda adalah membuat petualangan interaktif berbasis HTML/JS yang mendidik dan seru.
-    Gunakan Bahasa Indonesia yang ramah anak dan inspiratif.
     Hasilkan HANYA kode HTML mandiri (Single File) yang sudah termasuk CSS (Tailwind via CDN) dan JS.
-    DILARANG menyertakan teks penjelasan, pembuka, atau penutup di luar tag HTML.
-    DILARANG KERAS menimpa window.fetch atau memodifikasi objek global aplikasi induk.`;
+    DILARANG menyertakan teks penjelasan di luar tag HTML.
+    WAJIB menyertakan tombol "SELESAIKAN MISI" yang memicu: window.parent.postMessage({ type: 'ADVENTURE_COMPLETE' }, '*');`;
 
-    const userPrompt = `Buatlah sebuah PETUALANGAN INTERAKTIF DIGITAL untuk siswa bernama ${profile.name} (Level ${profile.level}).
-    
+    const userPrompt = `Buatlah PETUALANGAN INTERAKTIF DIGITAL untuk siswa bernama ${profile.name} (Level ${profile.level}).
     TEMA MISI: '${input || 'Petualangan Karakter'}'
     KATEGORI DIMENSI: ${type}
-    
-    Persyaratan Teknis:
-    1. Gunakan Tailwind CSS untuk desain yang modern, ceria, dan bersih (Modern Edutech).
-    2. Gunakan font 'Fredoka' dari Google Fonts untuk kesan bersahabat.
-    3. Gunakan FontAwesome (CDN) untuk ikon-ikon menarik.
-    4. Konten harus berupa mini-game sederhana, narasi pilihan ganda (Choose Your Own Adventure), atau simulasi laboratorium mini.
-    5. Di akhir petualangan, WAJIB panggil: window.parent.postMessage({ type: 'ADVENTURE_COMPLETE' }, '*');
-    6. Pastikan responsif di layar HP (Mobile Friendly).
-    7. Sertakan tombol "SELESAIKAN MISI" di bagian akhir yang memicu postMessage di atas.
-    
     Hasilkan HANYA kode HTML lengkap dimulai dengan <!DOCTYPE html>.`;
 
     const response = await ai.models.generateContent({
       model: getAiModel(),
-      contents: userPrompt,
+      contents: [
+        { role: 'user', parts: [{ text: systemText + "\n\n" + userPrompt }] }
+      ],
       config: { 
-        systemInstruction, 
         temperature: 0.9,
         topP: 0.95
       }
     });
 
     const text = response.text;
-    if (!text || text.trim().length < 100) {
+    if (!text || text.trim().length < 50) {
        throw new Error("AI_RESPONSE_EMPTY_OR_TOO_SHORT");
     }
     return cleanOutput(text);

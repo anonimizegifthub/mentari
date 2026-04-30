@@ -501,7 +501,7 @@ const PetualanganPortal: React.FC<{ profile: StudentProfile, onUpdateProfile: (p
         )
       )}
 
-      <BlockingOverlay isVisible={isLoading} text="AI Sedang Melukis Duniamu..." onCancel={handleCancelGeneration} isUnlocked={isUnlocked} />
+      <BlockingOverlay isVisible={isLoading} text="Sedang Merakit Petualangan..." onCancel={handleCancelGeneration} isUnlocked={isUnlocked} />
 
       {/* OVERLAY HASIL PETUALANGAN DENGAN BINGKAI STANDAR */}
       {adventureResult && (
