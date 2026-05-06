@@ -156,11 +156,11 @@ const App: React.FC = () => {
   const [teacherSettings, setTeacherSettings] = useState<TeacherSettings>(() => {
     try {
         const saved = localStorage.getItem('teacher_settings');
-        const defaults = { gasUrl: '', teacherName: '', schoolName: '', className: '', schoolCode: '', password: 'guru123', announcement: '', isAnnouncementActive: false, subjects: ['IPAS', 'Bahasa Indonesia', 'Matematika', 'Pendidikan Pancasila', 'Bahasa Inggris'], passingGrade: 70, aiModel: 'gemini-1.5-flash' };
+        const defaults = { gasUrl: '', teacherName: '', schoolName: '', className: '', schoolCode: '', password: 'guru123', announcement: '', isAnnouncementActive: false, subjects: ['IPAS', 'Bahasa Indonesia', 'Matematika', 'Pendidikan Pancasila', 'Bahasa Inggris'], passingGrade: 70, aiModel: 'gemini-3-flash-preview' };
         if (!saved) return defaults;
         const parsed = JSON.parse(saved);
         return { ...defaults, ...parsed };
-    } catch (e) { return { gasUrl: '', teacherName: '', schoolName: '', className: '', schoolCode: '', password: 'guru123', announcement: '', isAnnouncementActive: false, subjects: ['IPAS', 'Bahasa Indonesia', 'Matematika', 'Pendidikan Pancasila', 'Bahasa Inggris'], passingGrade: 70, aiModel: 'gemini-1.5-flash' }; }
+    } catch (e) { return { gasUrl: '', teacherName: '', schoolName: '', className: '', schoolCode: '', password: 'guru123', announcement: '', isAnnouncementActive: false, subjects: ['IPAS', 'Bahasa Indonesia', 'Matematika', 'Pendidikan Pancasila', 'Bahasa Inggris'], passingGrade: 70, aiModel: 'gemini-3-flash-preview' }; }
   });
 
   // AUTO-DETECT CONFIG FROM URL (Shared Student Links)
@@ -317,16 +317,6 @@ const App: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown, true);
   }, []);
 
-  useEffect(() => {
-    // Self-healing for invalid AI models in localStorage
-    if (teacherSettings.aiModel && (teacherSettings.aiModel.includes('gemini-3') || teacherSettings.aiModel.includes('gemini-2.5'))) {
-      const fixedSettings = { ...teacherSettings, aiModel: 'gemini-1.5-flash' };
-      setTeacherSettings(fixedSettings);
-      localStorage.setItem('teacher_settings', JSON.stringify(fixedSettings));
-      console.log("Self-healed invalid AI model name to gemini-1.5-flash");
-    }
-  }, [teacherSettings.aiModel]);
-
   const fetchRegistry = async () => {
     if (!spreadsheetUrl) return;
     try {
@@ -368,7 +358,7 @@ const App: React.FC = () => {
               isAnnouncementActive: raw.isAnnouncementActive !== undefined ? parseBool(raw.isAnnouncementActive) : (raw.IsAnnouncementActive !== undefined ? parseBool(raw.IsAnnouncementActive) : false), 
               subjects: safeSubjects,
               passingGrade: Number(raw.passingGrade || raw.PassingGrade || 70),
-              aiModel: raw.aiModel || raw.AiModel || 'gemini-1.5-flash'
+              aiModel: raw.aiModel || raw.AiModel || 'gemini-3-flash-preview'
             };
             setTeacherSettings(updatedSettings);
             localStorage.setItem('teacher_settings', JSON.stringify(updatedSettings));
