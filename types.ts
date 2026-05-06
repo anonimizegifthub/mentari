@@ -173,6 +173,7 @@ export interface TeacherSettings {
   subjects: string[];
   passingGrade: number;
   aiModel?: string;
+  manualApiKey?: string;
 }
 
 export interface VisualDesign {

@@ -358,7 +358,8 @@ const App: React.FC = () => {
               isAnnouncementActive: raw.isAnnouncementActive !== undefined ? parseBool(raw.isAnnouncementActive) : (raw.IsAnnouncementActive !== undefined ? parseBool(raw.IsAnnouncementActive) : false), 
               subjects: safeSubjects,
               passingGrade: Number(raw.passingGrade || raw.PassingGrade || 70),
-              aiModel: raw.aiModel || raw.AiModel || 'gemini-1.5-flash'
+              aiModel: raw.aiModel || raw.AiModel || 'gemini-1.5-flash',
+              manualApiKey: raw.manualApiKey || raw.ManualApiKey || ''
             };
             setTeacherSettings(updatedSettings);
             localStorage.setItem('teacher_settings', JSON.stringify(updatedSettings));

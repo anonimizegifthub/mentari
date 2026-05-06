@@ -36,6 +36,29 @@ const TabKonfigurasi: React.FC<TabKonfigurasiProps> = ({
             <div className="space-y-1.5"><label className="text-[9px] font-black uppercase text-slate-400 ml-1">Sekolah</label><input value={settings.schoolName} onChange={e => setSettings({...settings, schoolName: e.target.value})} className="w-full input-futuristic px-5 py-3 font-bold text-xs" /></div>
             <div className="space-y-1.5"><label className="text-[9px] font-black uppercase text-slate-400 ml-1">Kelas</label><input value={settings.className} onChange={e => setSettings({...settings, className: e.target.value})} className="w-full input-futuristic px-5 py-3 font-bold text-xs" /></div>
             
+            {/* API KEY MANUAL */}
+            <div className="space-y-1.5">
+              <label className="text-[9px] font-black uppercase text-rose-500 ml-1 flex items-center gap-2">
+                <i className="fas fa-key"></i> Google AI API Key (Opsional)
+              </label>
+              <input 
+                type="password"
+                value={settings.manualApiKey || ''} 
+                onChange={e => {
+                  const val = e.target.value;
+                  setSettings({...settings, manualApiKey: val});
+                  if (val.trim()) {
+                    localStorage.setItem('USER_API_KEY', val.trim());
+                  } else {
+                    localStorage.removeItem('USER_API_KEY');
+                  }
+                }} 
+                placeholder="Masukkan API Key manual jika ada..."
+                className="w-full input-futuristic px-5 py-3 font-bold text-xs border-2 border-rose-50 focus:border-rose-200" 
+              />
+              <p className="text-[7px] font-bold text-slate-400 uppercase mt-1 ml-1">* Kosongkan untuk menggunakan kuota default sistem.</p>
+            </div>
+
             {/* PARAMETER MODEL AI DENGAN KETERANGAN DETAIL */}
             <div className="space-y-1.5">
               <label className="text-[9px] font-black uppercase text-indigo-500 ml-1 flex items-center gap-2">

@@ -19,7 +19,20 @@ export const OPTIMIZED_MODEL = getAiModel();
 
 export const createAI = () => {
   // 1. Ambil dari input manual Guru di Pengaturan (Prioritas Utama)
-  const userKey = localStorage.getItem('USER_API_KEY');
+  let userKey = localStorage.getItem('USER_API_KEY');
+  
+  // Fallback: Coba ambil dari inside teacher_settings jika USER_API_KEY kosong
+  if (!userKey || userKey.trim() === "" || userKey === "undefined") {
+    try {
+      const saved = localStorage.getItem('teacher_settings');
+      if (saved) {
+        const settings = JSON.parse(saved);
+        if (settings.manualApiKey && settings.manualApiKey.trim() !== "") {
+          userKey = settings.manualApiKey.trim();
+        }
+      }
+    } catch (e) {}
+  }
   
   // 2. Ambil dari variabel lingkungan (Vercel/Vite/Local)
   // Vite menggunakan import.meta.env
