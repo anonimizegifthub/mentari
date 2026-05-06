@@ -7,35 +7,37 @@ export const getAiModel = (): string => {
     const saved = localStorage.getItem('teacher_settings');
     if (saved) {
       const settings = JSON.parse(saved);
-      const model = settings.aiModel || 'gemini-3-flash-preview';
-      // Auto-map old 1.5 names to 3.0 names for compatibility
-      if (model === 'gemini-1.5-flash') return 'gemini-3-flash-preview';
-      if (model === 'gemini-1.5-pro') return 'gemini-3-pro-preview';
+      const model = settings.aiModel || 'gemini-1.5-flash';
       return model;
     }
   } catch (e) {}
-  return 'gemini-3-flash-preview';
+  return 'gemini-1.5-flash';
 };
 
 // Deprecated constant, please use getAiModel()
 export const OPTIMIZED_MODEL = getAiModel();
 
 export const createAI = () => {
+  // 1. Ambil dari input manual Guru di Pengaturan (Prioritas Utama)
   const userKey = localStorage.getItem('USER_API_KEY');
-  const envKey = process.env.API_KEY;
-  const geminiKey = process.env.GEMINI_API_KEY;
   
-  // Prioritas: Manual User Key > GEMINI_API_KEY (Platform) > API_KEY (Fallback)
-  const finalKey = (userKey && userKey.trim() !== "") 
+  // 2. Ambil dari variabel lingkungan (Vercel/Vite/Local)
+  // Vite menggunakan import.meta.env
+  // Google AI Studio menggunakan process.env yang di-inject via define
+  
+  const finalKey = (userKey && userKey.trim() !== "" && userKey !== "undefined") 
     ? userKey.trim() 
-    : (geminiKey && geminiKey.trim() !== "") 
-      ? geminiKey.trim() 
-      : envKey;
+    : (import.meta as any).env?.VITE_GEMINI_API_KEY || 
+      (import.meta as any).env?.VITE_API_KEY ||
+      (process.env as any).GEMINI_API_KEY ||
+      (process.env as any).API_KEY;
 
-  if (!finalKey || finalKey === "undefined" || finalKey === "") {
+  if (!finalKey || finalKey === "undefined" || String(finalKey).trim() === "") {
+    console.error("DEBUG AI: API Key missing.");
     throw new Error("API_KEY_MISSING");
   }
-  return new GoogleGenAI({ apiKey: finalKey });
+  
+  return new GoogleGenAI({ apiKey: String(finalKey).trim() });
 };
 
 export const cleanHtmlOutput = (text: string): string => {

@@ -42,12 +42,12 @@ const TabKonfigurasi: React.FC<TabKonfigurasiProps> = ({
                 <i className="fas fa-brain"></i> Engine Kecerdasan AI
               </label>
               <select 
-                value={settings.aiModel || 'gemini-3-flash-preview'} 
+                value={settings.aiModel || 'gemini-1.5-flash'} 
                 onChange={e => setSettings({...settings, aiModel: e.target.value})} 
                 className="w-full input-futuristic px-5 py-3 font-black text-[10px] text-blue-600 uppercase tracking-widest cursor-pointer border-2 border-indigo-50"
               >
-                <option value="gemini-3-flash-preview">Gemini 3 Flash (Cepat & Efisien)</option>
-                <option value="gemini-3-pro-preview">Gemini 3 Pro (Pintar - Banana Pro)</option>
+                <option value="gemini-1.5-flash">Gemini 1.5 Flash (Sangat Cepat & Stabil)</option>
+                <option value="gemini-1.5-pro">Gemini 1.5 Pro (Sangat Pintar & Detail)</option>
               </select>
               
               <div className="mt-3 p-4 bg-indigo-50/50 rounded-2xl border border-indigo-100 space-y-3">
@@ -56,11 +56,11 @@ const TabKonfigurasi: React.FC<TabKonfigurasiProps> = ({
                     <i className="fas fa-bolt text-[10px]"></i>
                   </div>
                   <div>
-                    <p className="text-[8px] font-black text-blue-600 uppercase tracking-wider mb-0.5">GEMINI 3 FLASH (STANDARD)</p>
+                    <p className="text-[8px] font-black text-blue-600 uppercase tracking-wider mb-0.5">GEMINI 1.5 FLASH (DEFAUT)</p>
                     <p className="text-[7px] font-bold text-slate-500 uppercase leading-relaxed">
-                      <span className="text-emerald-600">KELEBIHAN:</span> Respons sangat instan, stabil untuk perakitan cepat, dan efisien dalam penggunaan token.
+                      <span className="text-emerald-600">KELEBIHAN:</span> Respons sangat kilat, optimal untuk perakitan soal dan materi harian.
                       <br/>
-                      <span className="text-rose-500">KONSEKUENSI:</span> Kedalaman analisis materi bersifat umum dan instruksi kompleks kadang disederhanakan.
+                      <span className="text-rose-500">KONSEKUENSI:</span> Analisis materi sangat to-the-point, cocok untuk tugas rutin.
                     </p>
                   </div>
                 </div>
@@ -72,11 +72,11 @@ const TabKonfigurasi: React.FC<TabKonfigurasiProps> = ({
                     <i className="fas fa-microchip text-[10px]"></i>
                   </div>
                   <div>
-                    <p className="text-[8px] font-black text-indigo-600 uppercase tracking-wider mb-0.5">GEMINI 3 PRO (PREMIUM ENGINE)</p>
+                    <p className="text-[8px] font-black text-indigo-600 uppercase tracking-wider mb-0.5">GEMINI 1.5 PRO (ADVANCED ENGINE)</p>
                     <p className="text-[7px] font-bold text-slate-500 uppercase leading-relaxed">
-                      <span className="text-emerald-600">KELEBIHAN:</span> Penalaran superior (Advanced Reasoning). Menghasilkan narasi materi yang jauh lebih detail, kreatif, dan presisi.
+                      <span className="text-emerald-600">KELEBIHAN:</span> Pemahaman materi sangat mendalam. Ideal untuk membuat simulasi Lab Maya atau Modul Ajar yang kompleks.
                       <br/>
-                      <span className="text-rose-500">KONSEKUENSI:</span> Waktu tunggu (Latency) lebih lama saat merakit. Mengonsumsi token API secara masif.
+                      <span className="text-rose-500">KONSEKUENSI:</span> Sedikit lebih lambat saat memproses karena tingkat kecerdasan yang lebih tinggi.
                     </p>
                   </div>
                 </div>

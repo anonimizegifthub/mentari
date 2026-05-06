@@ -156,11 +156,11 @@ const App: React.FC = () => {
   const [teacherSettings, setTeacherSettings] = useState<TeacherSettings>(() => {
     try {
         const saved = localStorage.getItem('teacher_settings');
-        const defaults = { gasUrl: '', teacherName: '', schoolName: '', className: '', schoolCode: '', password: 'guru123', announcement: '', isAnnouncementActive: false, subjects: ['IPAS', 'Bahasa Indonesia', 'Matematika', 'Pendidikan Pancasila', 'Bahasa Inggris'], passingGrade: 70, aiModel: 'gemini-3-flash-preview' };
+        const defaults = { gasUrl: '', teacherName: '', schoolName: '', className: '', schoolCode: '', password: 'guru123', announcement: '', isAnnouncementActive: false, subjects: ['IPAS', 'Bahasa Indonesia', 'Matematika', 'Pendidikan Pancasila', 'Bahasa Inggris'], passingGrade: 70, aiModel: 'gemini-1.5-flash' };
         if (!saved) return defaults;
         const parsed = JSON.parse(saved);
         return { ...defaults, ...parsed };
-    } catch (e) { return { gasUrl: '', teacherName: '', schoolName: '', className: '', schoolCode: '', password: 'guru123', announcement: '', isAnnouncementActive: false, subjects: ['IPAS', 'Bahasa Indonesia', 'Matematika', 'Pendidikan Pancasila', 'Bahasa Inggris'], passingGrade: 70, aiModel: 'gemini-3-flash-preview' }; }
+    } catch (e) { return { gasUrl: '', teacherName: '', schoolName: '', className: '', schoolCode: '', password: 'guru123', announcement: '', isAnnouncementActive: false, subjects: ['IPAS', 'Bahasa Indonesia', 'Matematika', 'Pendidikan Pancasila', 'Bahasa Inggris'], passingGrade: 70, aiModel: 'gemini-1.5-flash' }; }
   });
 
   // AUTO-DETECT CONFIG FROM URL (Shared Student Links)
@@ -358,7 +358,7 @@ const App: React.FC = () => {
               isAnnouncementActive: raw.isAnnouncementActive !== undefined ? parseBool(raw.isAnnouncementActive) : (raw.IsAnnouncementActive !== undefined ? parseBool(raw.IsAnnouncementActive) : false), 
               subjects: safeSubjects,
               passingGrade: Number(raw.passingGrade || raw.PassingGrade || 70),
-              aiModel: raw.aiModel || raw.AiModel || 'gemini-3-flash-preview'
+              aiModel: raw.aiModel || raw.AiModel || 'gemini-1.5-flash'
             };
             setTeacherSettings(updatedSettings);
             localStorage.setItem('teacher_settings', JSON.stringify(updatedSettings));
