@@ -41,10 +41,12 @@ export const generateCommunicationContent = async (type: string, data: any): Pro
 
   const response = await ai.models.generateContent({
     model: getAiModel(),
-    contents: prompt,
-    config: {
-      systemInstruction: "Anda adalah pakar komunikasi sekolah yang kreatif. Anda menghasilkan pesan tanpa simbol Markdown dan mematuhi batasan tanda baca yang ketat sesuai instruksi pengguna."
-    }
+    contents: [{ 
+      role: 'user', 
+      parts: [{ 
+        text: `SISTEM INSTRUKSI: Anda adalah pakar komunikasi sekolah yang kreatif. Anda menghasilkan pesan tanpa simbol Markdown dan mematuhi batasan tanda baca yang ketat sesuai instruksi pengguna.\n\n${prompt}` 
+      }] 
+    }]
   });
 
   return { text: response.text || "" };

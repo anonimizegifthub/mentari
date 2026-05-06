@@ -75,9 +75,13 @@ export const generateGameQuick = async (materi: string, kelas: string, questionC
 
     const response = await ai.models.generateContent({
       model: getAiModel(),
-      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      contents: [{ 
+        role: 'user', 
+        parts: [{ 
+          text: `SISTEM INSTRUKSI: Anda adalah Senior Game Architect. Anda menjamin mekanik game tidak rusak, input sentuh responsif (terutama untuk Interactive Flat Panel), dan sistem penilaian akurat berbasis persentase (0-100). DILARANG KERAS menimpa window.fetch.\n\n${prompt}` 
+        }] 
+      }],
       config: {
-        systemInstruction: "Anda adalah Senior Game Architect. Anda menjamin mekanik game tidak rusak, input sentuh responsif (terutama untuk Interactive Flat Panel), dan sistem penilaian akurat berbasis persentase (0-100). DILARANG KERAS menimpa window.fetch.",
         temperature: 0.7
       }
     });
@@ -123,10 +127,12 @@ export const generateGame = async (formData: GameFormData): Promise<string> => {
 
     const response = await ai.models.generateContent({
       model: getAiModel(),
-      contents: [{ role: 'user', parts: [{ text: prompt }] }],
-      config: {
-        systemInstruction: "Anda adalah Lead Game Developer. Fokus utama Anda adalah stabilitas input (terutama sentuhan pada Interactive Flat Panel), balancing kesulitan yang adil, dan akurasi skor persentase. DILARANG KERAS menimpa window.fetch."
-      }
+      contents: [{ 
+        role: 'user', 
+        parts: [{ 
+          text: `SISTEM INSTRUKSI: Anda adalah Lead Game Developer. Fokus utama Anda adalah stabilitas input (terutama sentuhan pada Interactive Flat Panel), balancing kesulitan yang adil, dan akurasi skor persentase. DILARANG KERAS menimpa window.fetch.\n\n${prompt}` 
+        }] 
+      }]
     });
     return cleanOutput(response.text || "");
   } catch (e: any) {
@@ -160,10 +166,12 @@ export const generateInteractiveQuiz = async (formData: AssessmentFormData, minS
 
     const response = await ai.models.generateContent({
       model: getAiModel(),
-      contents: [{ role: 'user', parts: [{ text: prompt }] }],
-      config: {
-        systemInstruction: "Anda adalah Senior Frontend Developer. Anda membuat aplikasi kuis interaktif yang sangat stabil, indah secara visual, dan memiliki logika penilaian persentase yang akurat. DILARANG KERAS menimpa window.fetch."
-      }
+      contents: [{ 
+        role: 'user', 
+        parts: [{ 
+          text: `SISTEM INSTRUKSI: Anda adalah Senior Frontend Developer. Anda membuat aplikasi kuis interaktif yang sangat stabil, indah secara visual, dan memiliki logika penilaian persentase yang akurat. DILARANG KERAS menimpa window.fetch.\n\n${prompt}` 
+        }] 
+      }]
     });
     return cleanOutput(response.text || "");
   } catch (e: any) {

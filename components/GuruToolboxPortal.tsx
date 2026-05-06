@@ -3,6 +3,7 @@ import { TeacherToolType, TeacherSettings, VisualDesign } from '../types';
 import { generateTeacherTool, generateVisualLayout, buildCanvaPrompt } from '../services/teacherToolsService';
 import { BlockingOverlay, ProRequirementNotice } from './SharedUI';
 import { validateUsageCloud, getUsageStatusCloud } from '../services/validationService';
+import { handleAiGenerationError } from '../utils/errorUtils';
 
 const GuruToolboxPortal: React.FC<{ isUnlocked: boolean, gasUrl?: string, myDeviceId?: string, setGlobalBusy: (b: boolean) => void, settings: TeacherSettings }> = ({ isUnlocked, gasUrl, myDeviceId, setGlobalBusy, settings }) => {
   const [activeTool, setActiveTool] = useState<TeacherToolType>('lkpd');
@@ -107,7 +108,7 @@ const GuruToolboxPortal: React.FC<{ isUnlocked: boolean, gasUrl?: string, myDevi
 
       setTimeout(() => resultRef.current?.scrollIntoView({ behavior: 'smooth' }), 300);
     } catch (e) {
-      alert("Gagal memproses AI.");
+      handleAiGenerationError(e);
     } finally {
       setIsLoading(false);
       setGlobalBusy(false);

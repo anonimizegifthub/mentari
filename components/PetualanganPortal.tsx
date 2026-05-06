@@ -3,6 +3,7 @@ import { StudentProfile, Student, AIWork } from '../types';
 import { generateAdventureContent } from '../services/studentAiService';
 import { BlockingOverlay } from './SharedUI';
 import { sanitizeGeneratedCode } from '../utils/codeUtils';
+import { handleAiGenerationError } from '../utils/errorUtils';
 import React, { useState, useRef, useMemo, useEffect } from 'react';
 
 const PetualanganPortal: React.FC<{ profile: StudentProfile, onUpdateProfile: (p: StudentProfile) => void, students: Student[], setGlobalBusy: (b: boolean) => void, isUnlocked?: boolean }> = ({ profile, onUpdateProfile, students, setGlobalBusy, isUnlocked = false }) => {
@@ -281,7 +282,7 @@ const PetualanganPortal: React.FC<{ profile: StudentProfile, onUpdateProfile: (p
       setAdventureResult(code);
       setReadTimer(0);
     } catch (err) {
-      alert("Waduh! Ada gangguan di portal dimensi. Silakan coba lagi.");
+      handleAiGenerationError(err, 'membuka portal petualangan');
     } finally {
       setIsLoading(false); 
       setGlobalBusy(false);

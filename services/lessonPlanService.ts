@@ -147,19 +147,20 @@ NIP. ${cleanNIP}`;
 
     const response = await ai.models.generateContent({
       model: getAiModel(),
-      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      contents: [{ 
+        role: 'user', 
+        parts: [{ 
+          text: `SISTEM INSTRUKSI: Anda adalah Robot Penyusun Modul Ajar yang sangat patuh pada format tabel. Tugas Anda adalah menghasilkan Modul Ajar Kurikulum Merdeka yang lengkap, mendalam, dan rapi sesuai instruksi.\n\n${prompt}` 
+        }] 
+      }],
       config: {
-        tools: [{ googleSearch: {} }] 
+        temperature: 0.7,
+        topP: 0.95,
       }
     });
 
     const text = response.text || "";
-    const groundingChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
-    const sources: GroundingSource[] = groundingChunks
-      .filter((chunk: any) => chunk.web)
-      .map((chunk: any) => ({ title: chunk.web.title, uri: chunk.web.uri }));
-
-    return { text, sources };
+    return { text, sources: [] };
   } catch (e: any) {
     throw e;
   }

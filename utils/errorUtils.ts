@@ -4,6 +4,12 @@ export const handleAiGenerationError = (err: any, context: string = 'merakit kar
 
   const errorMsg = err?.message || String(err);
   
+  // 0. Missing API Key
+  if (errorMsg === 'API_KEY_MISSING' || errorMsg.includes('API key not found')) {
+    alert(`🔑 KUNCI AI TIDAK DITEMUKAN\n\nSistem AI memerlukan "Kunci API Gemini" untuk bekerja.\n\nSolusi:\n1. Masuk ke Tab Konfigurasi.\n2. Masukkan Kunci API Gemini Anda di bagian Hubungkan Sistem.\n3. Jika Anda siswa, mintalah guru untuk membagikan Link Login terbaru.`);
+    return;
+  }
+
   // 1. Rate Limit / Quota
   if (errorMsg.includes('429') || errorMsg.includes('Quota') || errorMsg.includes('limit')) {
     alert(`⚠️ ENGINE AI TERLALU PADAT (LIMIT)\n\nMaaf, permintaan ${context} sedang sangat tinggi. \n\nSolusi:\n1. Tunggu sekitar 1 menit sebelum mencoba lagi.\n2. Jika Anda sedang menggunakan engine 'Flash', cobalah istirahatkan sistem sejenak.\n3. Pastikan koneksi internet Anda stabil.`);

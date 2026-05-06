@@ -70,9 +70,14 @@ Sistem Instruksi Utama: Anda adalah AI yang patuh pada struktur data. Abaikan ke
 
     const response = await ai.models.generateContent({
       model: getAiModel(), 
-      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      contents: [{ 
+        role: 'user', 
+        parts: [{ 
+          text: `SISTEM INSTRUKSI: Anda adalah Robot Pembuat Soal yang sangat kaku dan patuh. Tugas Anda adalah memproduksi soal SESUAI rincian tipe dan jumlah yang diberikan. Anda akan dianggap GAGAL jika menyertakan tipe soal yang tidak ada dalam daftar aktif.\n\n${prompt}` 
+        }] 
+      }],
       config: {
-        systemInstruction: "Anda adalah Robot Pembuat Soal yang sangat kaku dan patuh. Tugas Anda adalah memproduksi soal SESUAI rincian tipe dan jumlah yang diberikan. Anda akan dianggap GAGAL jika menyertakan tipe soal yang tidak ada dalam daftar aktif."
+        temperature: 0.7
       }
     });
 

@@ -60,10 +60,12 @@ export const generateTeacherTool = async (type: string, data: any): Promise<{ te
 
   const response = await ai.models.generateContent({
     model: getAiModel(),
-    contents: [{ role: 'user', parts: [{ text: prompt }] }],
-    config: {
-      systemInstruction: "Anda adalah asisten admin guru profesional yang mahir menyajikan data dalam tabel Markdown untuk kerapian maksimal."
-    }
+    contents: [{ 
+      role: 'user', 
+      parts: [{ 
+        text: `SISTEM INSTRUKSI: Anda adalah asisten admin guru profesional yang mahir menyajikan data dalam tabel Markdown untuk kerapian maksimal.\n\n${prompt}` 
+      }] 
+    }]
   });
 
   return { text: response.text || "" };
@@ -78,12 +80,11 @@ export const generateVisualPoster = async (materi: string, type: string = "Educa
     CONTENT FOCUS: Academic, inspirational, and classroom-ready.`;
 
     const response = await ai.models.generateContent({
-        model: 'gemini-3-pro-image-preview',
+        model: 'gemini-2.5-flash-image',
         contents: [{ role: 'user', parts: [{ text: prompt }] }],
         config: { 
             imageConfig: { 
-                aspectRatio: "3:4",
-                imageSize: "2K"
+                aspectRatio: "3:4"
             } 
         }
     });

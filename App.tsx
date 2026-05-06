@@ -96,6 +96,21 @@ const App: React.FC = () => {
 
   const [dailyFact, setDailyFact] = useState<any>({ category: "Wawasan", title: "Memuat...", content: "Harap tunggu sebentar..." });
 
+  useEffect(() => {
+    const fetchDailyFact = async () => {
+      if (!isLoggedIn || userRole !== 'student') return;
+      
+      try {
+        const subjects = Array.isArray(teacherSettings.subjects) ? teacherSettings.subjects : [];
+        const fact = await getDailyInspiration(subjects);
+        setDailyFact(fact);
+      } catch (err) {
+        setDailyFact({ category: "Wawasan", title: "Terjadi Kesalahan", content: "Waktu yang tepat untuk belajar hal baru!" });
+      }
+    };
+    fetchDailyFact();
+  }, [isLoggedIn, userRole]); // Only fetch once on login as student
+
   const [activeGameMission, setActiveGameMission] = useState<Mission | null>(null);
   const [viewMission, setViewMission] = useState<Mission | null>(null); 
   const [activeLabMaterial, setActiveLabMaterial] = useState<InteractiveMaterial | null>(null);
@@ -147,6 +162,48 @@ const App: React.FC = () => {
         return { ...defaults, ...parsed };
     } catch (e) { return { gasUrl: '', teacherName: '', schoolName: '', className: '', schoolCode: '', password: 'guru123', announcement: '', isAnnouncementActive: false, subjects: ['IPAS', 'Bahasa Indonesia', 'Matematika', 'Pendidikan Pancasila', 'Bahasa Inggris'], passingGrade: 70, aiModel: 'gemini-3-flash-preview' }; }
   });
+
+  // AUTO-DETECT CONFIG FROM URL (Shared Student Links)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const gasParam = params.get('gas');
+    const keyParam = params.get('key');
+
+    const tryDecode = (val: string) => {
+        try {
+            // First try as Base64 (Standard Share Pattern)
+            const clean = val.replace(/ /g, '+');
+            const decoded = atob(clean);
+            if (decoded) return decoded;
+        } catch (e) {
+            // Fallback: Use as raw string if it looks like a valid target
+            return val;
+        }
+        return val;
+    };
+
+    if (gasParam) {
+      const decodedGas = tryDecode(gasParam);
+      if (decodedGas && (decodedGas.startsWith('https://script.google.com/') || decodedGas.includes('script.google.com'))) {
+          setTeacherSettings(prev => ({ ...prev, gasUrl: decodedGas }));
+          
+          if (keyParam) {
+            const decodedKey = tryDecode(keyParam);
+            if (decodedKey && decodedKey.trim().length > 10) {
+              localStorage.setItem('USER_API_KEY', decodedKey.trim());
+              console.log("AI API Key updated from URL");
+            }
+          }
+
+          // Force sync if we just got a new GAS URL
+          syncTeacherData(decodedGas, false).catch(err => console.error("Auto-sync failed", err));
+          
+          // Re-update local storage for teacher_settings
+          const currentSettings = JSON.parse(localStorage.getItem('teacher_settings') || '{}');
+          localStorage.setItem('teacher_settings', JSON.stringify({ ...currentSettings, gasUrl: decodedGas }));
+      }
+    }
+  }, []);
 
   const [students, setStudents] = useState<Student[]>(() => {
     try {
@@ -605,8 +662,6 @@ const App: React.FC = () => {
     return () => window.removeEventListener('message', handleGameMessage);
   }, [activeGameMission]);
 
-  const memoizedDailyInspiration = useMemo(async () => { const subjects = Array.isArray(teacherSettings.subjects) ? teacherSettings.subjects : []; return await getDailyInspiration(subjects); }, [teacherSettings.subjects]);
-  useEffect(() => { const fetchDailyFact = async () => { try { const fact = await memoizedDailyInspiration; setDailyFact(fact); } catch (err) { setDailyFact({ category: "Wawasan", title: "Terjadi Kesalahan", content: "Waktu yang tepat untuk belajar hal baru!" }); } }; fetchDailyFact(); }, [memoizedDailyInspiration]);
   useEffect(() => { const fetchWord = async () => { const today = new Date().toISOString().split('T')[0]; if (studentProfile.name && studentProfile.lastWordOfDay?.date !== today) { try { const wordData = await getWordOfDay(studentProfile.name); handleUpdateStudentProfile({ ...studentProfile, lastWordOfDay: { ...wordData, date: today } }); } catch (err) { console.error(err); } } }; fetchWord(); }, [studentProfile.name]);
   
   useEffect(() => { 
@@ -950,13 +1005,11 @@ const App: React.FC = () => {
             userRole={userRole} 
             setActiveTab={setActiveTab} 
             onLogout={() => { 
-              if(window.confirm("Logout dari sesi saat ini?")) { 
                 localStorage.removeItem('isLoggedIn'); 
                 localStorage.removeItem('userRole');
                 localStorage.removeItem('loggedStudentId');
                 // Alihkan ke URL bersih tanpa parameter gas/key untuk keamanan
                 window.location.href = window.location.origin + window.location.pathname; 
-              } 
             }}
             logoUrl={HEADER_LOGO_URL}
             isSidebarOpen={isSidebarOpen}

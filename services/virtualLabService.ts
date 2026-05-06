@@ -44,9 +44,13 @@ export const generateVirtualLab = async (materi: string, kelas: string, platform
 
     const response = await ai.models.generateContent({
       model: getAiModel(),
-      contents: prompt,
+      contents: [{ 
+        role: 'user', 
+        parts: [{ 
+          text: `SISTEM INSTRUKSI: Anda adalah Software Engineer & Ilmuwan Simulasi. Keahlian Anda adalah menciptakan simulasi STEM yang akurat secara ilmiah dan memiliki antarmuka pengguna yang sangat responsif di perangkat touchscreen.\n\n${prompt}` 
+        }] 
+      }],
       config: { 
-        systemInstruction: "Anda adalah Software Engineer & Ilmuwan Simulasi. Keahlian Anda adalah menciptakan simulasi STEM yang akurat secara ilmiah dan memiliki antarmuka pengguna yang sangat responsif di perangkat touchscreen.",
         temperature: 0.7 
       }
     });
@@ -88,9 +92,13 @@ export const generateLiteracyAdventure = async (materi: string, subMateri: strin
 
     const response = await ai.models.generateContent({
       model: getAiModel(), // Dinamis berdasarkan setting guru
-      contents: prompt,
+      contents: [{ 
+        role: 'user', 
+        parts: [{ 
+          text: `SISTEM INSTRUKSI: Anda adalah Lead EdTech Developer & Specialist Kurikulum Literasi. Anda mahir mengubah materi pelajaran yang kaku menjadi petualangan digital interaktif yang memikat perhatian siswa.\n\n${prompt}` 
+        }] 
+      }],
       config: {
-        systemInstruction: "Anda adalah Lead EdTech Developer & Specialist Kurikulum Literasi. Anda mahir mengubah materi pelajaran yang kaku menjadi petualangan digital interaktif yang memikat perhatian siswa.",
         temperature: 0.8
       }
     });

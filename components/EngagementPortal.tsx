@@ -4,6 +4,7 @@ import { generateEngagementContent, generateVisualLayout } from '../services/eng
 import { buildCanvaPrompt } from '../services/teacherToolsService';
 import { BlockingOverlay, ProRequirementNotice } from './SharedUI';
 import { validateUsageCloud, getUsageStatusCloud } from '../services/validationService';
+import { handleAiGenerationError } from '../utils/errorUtils';
 
 const EngagementPortal: React.FC<{ isUnlocked: boolean, gasUrl?: string, students: Student[], settings: TeacherSettings, setGlobalBusy: (b: boolean) => void }> = ({ isUnlocked, gasUrl, students, settings, setGlobalBusy }) => {
   const [activeTool, setActiveTool] = useState<EngagementToolType>('certificate');
@@ -112,7 +113,7 @@ const EngagementPortal: React.FC<{ isUnlocked: boolean, gasUrl?: string, student
 
       setTimeout(() => resultRef.current?.scrollIntoView({ behavior: 'smooth' }), 300);
     } catch (e) {
-      alert("Gagal merancang tantangan.");
+      handleAiGenerationError(e);
     } finally {
       setIsLoading(false);
       setGlobalBusy(false);

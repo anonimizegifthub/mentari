@@ -3,6 +3,7 @@ import { CommunicationToolType, Student, TeacherSettings } from '../types';
 import { generateCommunicationContent } from '../services/communicationService';
 import { BlockingOverlay, ProRequirementNotice } from './SharedUI';
 import { validateUsageCloud, getUsageStatusCloud } from '../services/validationService';
+import { handleAiGenerationError } from '../utils/errorUtils';
 
 const CommunicationPortal: React.FC<{ isUnlocked: boolean, gasUrl?: string, students: Student[], settings: TeacherSettings, setGlobalBusy: (b: boolean) => void }> = ({ isUnlocked, gasUrl, students, settings, setGlobalBusy }) => {
   const [activeTool, setActiveTool] = useState<CommunicationToolType>('bulletin');
@@ -101,7 +102,7 @@ const CommunicationPortal: React.FC<{ isUnlocked: boolean, gasUrl?: string, stud
 
       setTimeout(() => resultRef.current?.scrollIntoView({ behavior: 'smooth' }), 300);
     } catch (e) {
-      alert("Gagal merancang pesan komunikasi.");
+      handleAiGenerationError(e);
     } finally {
       setIsLoading(false);
       setGlobalBusy(false);

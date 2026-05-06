@@ -41,7 +41,12 @@ export const generateCreativeMedia = async (type: string, data: any): Promise<Cr
 
   const response = await ai.models.generateContent({
     model: getAiModel(),
-    contents: prompt,
+    contents: [{ 
+      role: 'user', 
+      parts: [{ 
+        text: `SISTEM INSTRUKSI: Anda adalah asisten cerdas yang mahir menghasilkan data JSON bersih tanpa karakter format markdown apa pun.\n\n${prompt}` 
+      }] 
+    }],
     config: {
       responseMimeType: "application/json",
       responseSchema: {
@@ -51,8 +56,7 @@ export const generateCreativeMedia = async (type: string, data: any): Promise<Cr
           source: { type: Type.STRING }
         },
         required: ["draft", "source"]
-      },
-      systemInstruction: "Anda adalah asisten cerdas yang mahir menghasilkan data JSON bersih tanpa karakter format markdown apa pun."
+      }
     }
   });
 

@@ -54,10 +54,12 @@ export const generateEngagementContent = async (type: string, data: any): Promis
 
   const response = await ai.models.generateContent({
     model: getAiModel(),
-    contents: prompt,
-    config: {
-      systemInstruction: "Anda adalah desainer gamifikasi pendidikan. Anda menghasilkan teks murni tanpa simbol Markdown (#, *) dan menggunakan tabel Markdown hanya untuk struktur formal yang sangat rapi."
-    }
+    contents: [{ 
+      role: 'user', 
+      parts: [{ 
+        text: `SISTEM INSTRUKSI: Anda adalah desainer gamifikasi pendidikan. Anda menghasilkan teks murni tanpa simbol Markdown (#, *) dan menggunakan tabel Markdown hanya untuk struktur formal yang sangat rapi.\n\n${prompt}` 
+      }] 
+    }]
   });
 
   return { text: response.text || "" };
@@ -76,7 +78,7 @@ export const generateVisualLayout = async (materi: string, content: string, type
 
     const response = await ai.models.generateContent({
         model: getAiModel(),
-        contents: prompt,
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
         config: {
             responseMimeType: "application/json",
             responseSchema: {
