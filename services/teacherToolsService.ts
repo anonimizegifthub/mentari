@@ -80,13 +80,8 @@ export const generateVisualPoster = async (materi: string, type: string = "Educa
     CONTENT FOCUS: Academic, inspirational, and classroom-ready.`;
 
     const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash-image',
+        model: getAiModel(),
         contents: [{ role: 'user', parts: [{ text: prompt }] }],
-        config: { 
-            imageConfig: { 
-                aspectRatio: "3:4"
-            } 
-        }
     });
     let imageUrl = "";
     if (response.candidates && response.candidates[0] && response.candidates[0].content && response.candidates[0].content.parts) {

@@ -7,10 +7,10 @@ export const getAiModel = (): string => {
     const saved = localStorage.getItem('teacher_settings');
     if (saved) {
       const settings = JSON.parse(saved);
-      return settings.aiModel || 'gemini-3-flash-preview';
+      return settings.aiModel || 'gemini-1.5-flash';
     }
   } catch (e) {}
-  return 'gemini-3-flash-preview';
+  return 'gemini-1.5-flash';
 };
 
 // Deprecated constant, please use getAiModel()
